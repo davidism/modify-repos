@@ -1,0 +1,121 @@
+[project]
+name = "modify-repos"
+version = "0.1.0"
+description = "Apply changes across multiple repos at once."
+readme = "README.md"
+authors = [{ name = "David Lord" }]
+license = "MIT"
+license-files = ["LICENSE.txt"]
+requires-python = "~=3.13"
+dependencies = [
+    "click>=8.1.8",
+]
+
+[project.scripts]
+modify-repos = "modify_repos.cli:entry_point"
+
+[build-system]
+requires = ["pdm-backend>=2.4.3"]
+build-backend = "pdm.backend"
+
+[dependency-groups]
+dev = [
+    "mypy>=1.14.1",
+    "pre-commit>=4.0.1",
+    "pyright>=1.1.391",
+    "pytest>=8.3.4",
+    "ruff>=0.8.6",
+    "tox>=4.23.2",
+    "tox-uv>=1.17.0",
+]
+pre-commit = [
+    "pre-commit>=4.0.1",
+]
+typing = [
+    "mypy>=1.14.1",
+    "pyright>=1.1.391",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = [
+    "error",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["modify_repos", "tests"]
+
+[tool.coverage.paths]
+source = ["src", "*/site-packages"]
+
+[tool.mypy]
+python_version = "3.13"
+files = ["src"]
+show_error_codes = true
+pretty = true
+strict = true
+
+[tool.pyright]
+pythonVersion = "3.13"
+include = ["src"]
+typeCheckingMode = "strict"
+
+[tool.ruff]
+src = ["src"]
+fix = true
+show-fixes = true
+output-format = "full"
+
+[tool.ruff.lint]
+select = [
+    "B",  # flake8-bugbear
+    "E",  # pycodestyle error
+    "F",  # pyflakes
+    "I",  # isort
+    "UP",  # pyupgrade
+    "W",  # pycodestyle warning
+]
+
+[tool.ruff.lint.isort]
+force-single-line = true
+order-by-type = false
+
+[tool.gha-update]
+tag-only = [
+    "slsa-framework/slsa-github-generator",
+]
+
+[tool.tox]
+env_list = ["style", "typing"]
+
+[tool.tox.env_run_base]
+runner = "uv-venv-lock-runner"
+package = "wheel"
+wheel_build_env = ".pkg"
+constrain_package_deps = true
+use_frozen_constraints = true
+
+[tool.tox.env.style]
+dependency_groups = ["pre-commmit"]
+skip_install = true
+commands = [["pre-commit", "run", "--all-files"]]
+
+[tool.tox.env.typing]
+dependency_groups = ["typing"]
+commands = [
+    ["mypy"],
+    ["pyright"],
+    ["pyright", "--verifytypes", "modify_repos", "--ignoreexternal"],
+]
+
+[tool.tox.env.update-pre_commit]
+labels = ["update"]
+dependency_groups = ["pre-commit"]
+skip_install = true
+commands = [["pre-commit", "autoupdate", "--freeze", "-j4"]]
+
+[tool.tox.env.update-requirements]
+labels = ["update"]
+skip_install = true
+commands = [["uv", "sync", { replace = "posargs", default = ["-U"], extend = true }]]
