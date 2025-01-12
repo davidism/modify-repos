@@ -1,13 +1,15 @@
 from __future__ import annotations
 
 import dataclasses
+from contextlib import chdir
 from functools import cached_property
 from inspect import isclass
 from pathlib import Path
 from pkgutil import resolve_name
 
+import click
+
 from modify_repos.cmd import echo_cmd
-from modify_repos.cmd import pushd
 from modify_repos.cmd import run_cmd
 
 
@@ -25,7 +27,7 @@ class Repo:
         self.dir.parent.mkdir(parents=True, exist_ok=True)
 
         if self.dir.exists():
-            with pushd(self.dir):
+            with chdir(self.dir):
                 run_cmd("git", "switch", "-f", script.target)
                 run_cmd("git", "pull", "--prune")
         else:
@@ -51,7 +53,7 @@ class Repo:
         )
         script.modify(self)
 
-        if run_cmd("git", "status", "--porcelain"):
+        if run_cmd("git", "status", "--porcelain").stdout:
             run_cmd("git", "add", "--all")
             run_cmd("git", "commit", "--message", f"{script.title}\n\n{script.body}")
 
@@ -134,13 +136,25 @@ class Script:
             ignore.write_text("*\n")
 
         for repo in self.list_repos():
+            click.secho(repo.full_name, fg="green")
+
             if self.select_for_clone(repo):
                 repo.clone(self)
 
-                if self.select_for_modify(repo):
-                    with pushd(repo.dir):
+                with chdir(repo.dir):
+                    if self.select_for_modify(repo):
                         repo.modify(self)
-                        repo.push(self)
+
+                        if self.push:
+                            repo.push(self)
+                        else:
+                            click.secho("skipping push", fg="yellow")
+                    else:
+                        click.secho("skipping modify", fg="yellow")
+            else:
+                click.secho("skipping clone", fg="yellow")
+
+            click.echo()
 
     def select_for_clone(self, repo: Repo) -> bool:
         return True
