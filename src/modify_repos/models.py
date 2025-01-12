@@ -84,6 +84,9 @@ class Repo:
 
 
 class Script:
+    orgs: list[str]
+    target: str = "main"
+    branch: str
     title: str
     body: str
     target: str = "main"
@@ -91,7 +94,6 @@ class Script:
 
     def __init__(self, orgs: list[str], push: bool) -> None:
         self.clones_dir: Path = Path("clones")
-        self.orgs = orgs
         self.push = push
 
     @classmethod
