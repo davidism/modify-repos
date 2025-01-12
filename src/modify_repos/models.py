@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import dataclasses
+import typing as t
 from contextlib import chdir
 from functools import cached_property
 from inspect import isclass
@@ -11,6 +12,7 @@ import click
 
 from modify_repos.cmd import echo_cmd
 from modify_repos.cmd import run_cmd
+from modify_repos.wrap import wrap
 
 
 @dataclasses.dataclass
@@ -91,10 +93,12 @@ class Script:
     branch: str
     title: str
     body: str
-    target: str = "main"
-    branch: str
 
-    def __init__(self, orgs: list[str], push: bool) -> None:
+    def __init_subclass__(cls, **kwargs: t.Any) -> None:
+        super().__init_subclass__(**kwargs)
+        cls.body = wrap(cls.body, width=72)
+
+    def __init__(self, push: bool) -> None:
         self.clones_dir: Path = Path("clones")
         self.push = push
 
