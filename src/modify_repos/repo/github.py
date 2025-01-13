@@ -14,8 +14,20 @@ if t.TYPE_CHECKING:
 
 
 class GitHubRepo(GitRepo):
+    """Subclass this to define how to manipulate Git repositories. This extends
+    the plain :class:`GitRepo` to clone and create PRs using the GitHub CLI.
+
+    :param script: The script being run to modify this repo.
+    :param org: The GitHub user/org that owns the repo.
+    :param name: The GitHub repo name.
+    """
+
     _gh_exe: str | None = which("gh")
     direct_submit: bool = False
+    """Whether to merge and push directly to the target branch, rather than
+    creating a PR. This is disabled by default as a PR will give more
+    opportunity to review any mistakes with the automated changes.
+    """
 
     def __init__(self, script: Script[t.Any], org: str, name: str) -> None:
         self.org = org
@@ -23,6 +35,10 @@ class GitHubRepo(GitRepo):
         super().__init__(script=script, remote_id=self.full_name)
 
     def gh_cmd(self, *args: str | Path) -> CompletedProcess[str]:
+        """Call and pass args to the `gh` command.
+
+        :param args: Command line arguments to the `gh` command.
+        """
         if self._gh_exe is None:
             raise RuntimeError("GitHub CLI is not installed.")
 
@@ -30,6 +46,7 @@ class GitHubRepo(GitRepo):
 
     @cached_property
     def full_name(self) -> str:
+        """The `org/name` identifier for the repo."""
         return f"{self.org}/{self.name}"
 
     def clone(self) -> None:
