@@ -49,13 +49,10 @@ class GitHubRepo(GitRepo):
             super().submit()
             return
 
-        self.git_cmd(
-            "push", "--dry-run", "--set-upstream", "origin", self.script.branch
-        )
+        self.git_cmd("push", "--set-upstream", "origin", self.script.branch)
         self.gh_cmd(
             "pr",
             "create",
-            "--dry-run",
             "--base",
             self.script.target,
             "--title",

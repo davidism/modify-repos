@@ -48,7 +48,7 @@ class GitRepo(Repo):
     def submit(self) -> None:
         self.git_cmd("switch", self.script.target)
         self.git_cmd("merge", "--ff-only", self.script.branch)
-        self.git_cmd("push", "--dry-run")
+        self.git_cmd("push")
 
     def add_files(
         self, *items: str | Path, update: bool = False, all: bool = False

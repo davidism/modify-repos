@@ -52,7 +52,7 @@ class Repo:
         raise NotImplementedError
 
     def submit_if_needed(self) -> None:
-        if self.needs_submit():
+        if self.script.enable_submit and self.needs_submit():
             self.submit()
         else:
             click.secho("skipping submit", fg="yellow")

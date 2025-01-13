@@ -18,7 +18,7 @@ class Script[RepoType: Repo]:
     title: str
     body: str
 
-    def __init__(self) -> None:
+    def __init__(self, *, submit: bool = False) -> None:
         source_file = inspect.getsourcefile(self.__class__)
 
         if source_file is None:
@@ -38,6 +38,7 @@ class Script[RepoType: Repo]:
             ignore.write_text("*\n")
 
         self.body = wrap_text(self.body, width=72)
+        self.enable_submit = submit
 
     def render_template(self, name: str, /, **kwargs: t.Any) -> str:
         return self.jinja_env.get_template(name).render(**kwargs)

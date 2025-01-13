@@ -6,8 +6,8 @@ from .base import Script
 
 
 class GitHubScript(Script[GitHubRepo]):
-    def __init__(self, orgs: list[str] | None = None) -> None:
-        super().__init__()
+    def __init__(self, *, submit: bool = True, orgs: list[str] | None = None) -> None:
+        super().__init__(submit=submit)
 
         if orgs is not None:
             self.orgs = orgs
