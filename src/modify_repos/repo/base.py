@@ -5,6 +5,8 @@ from contextlib import chdir
 from functools import cached_property
 from pathlib import Path
 
+import click
+
 if t.TYPE_CHECKING:
     from ..script.base import Script
 
@@ -52,14 +54,18 @@ class Repo:
     def submit_if_needed(self) -> None:
         if self.needs_submit():
             self.submit()
+        else:
+            click.secho("skipping submit", fg="yellow")
 
     def run(self) -> None:
+        click.secho(self.remote_id, fg="green")
         self.clone_if_needed()
 
         with chdir(self.local_dir):
             self.reset_target()
 
             if not self.script.select_for_modify(self):
+                click.secho("skipping modify", fg="yellow")
                 return
 
             self.reset_branch()
