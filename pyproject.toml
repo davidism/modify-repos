@@ -9,10 +9,9 @@ license-files = ["LICENSE.txt"]
 requires-python = "~=3.13"
 dependencies = [
     "click>=8.1.8",
+    "jinja2>=3.1.5",
+    "platformdirs>=4.3.6",
 ]
-
-[project.scripts]
-modify-repos = "modify_repos.cli:entry_point"
 
 [build-system]
 requires = ["pdm-backend>=2.4.3"]
