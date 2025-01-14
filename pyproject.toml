@@ -43,6 +43,9 @@ docs = [
 docs-auto = [
     "sphinx-autobuild>=2024.10.3",
 ]
+gha-update = [
+    "gha-update>=0.1.0",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -124,6 +127,12 @@ commands = [["sphinx-build", "-E", "-W", "-b", "dirhtml", "docs", "docs/_build/d
 [tool.tox.env.docs-auto]
 dependency_groups = ["docs", "docs-auto"]
 commands = [["sphinx-autobuild", "-W", "-b", "dirhtml", "--watch", "src", "docs", "docs/_build/dirhtml"]]
+
+[tool.tox.env.update-actions]
+labels = ["update"]
+dependency_groups = ["gha-update"]
+skip_install = true
+commands = [["gha-update"]]
 
 [tool.tox.env.update-pre_commit]
 labels = ["update"]
