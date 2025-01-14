@@ -1,6 +1,6 @@
 ## Version 0.2.0
 
-Unreleased
+Released 2025-01-14
 
 - If a PR already exists from a previous failed run, force push to update the
   existing branch and PR.
