@@ -1,6 +1,6 @@
 [project]
 name = "modify-repos"
-version = "0.2.0.dev"
+version = "0.2.0"
 description = "Apply changes across multiple repos at once."
 readme = "README.md"
 authors = [{ name = "David Lord" }]
