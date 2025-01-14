@@ -5,7 +5,6 @@ on:
   push:
     branches: [main, stable]
     paths: ['src/**', 'pyproject.toml']
-    tags: ['*']
 jobs:
   typing:
     runs-on: ubuntu-latest
