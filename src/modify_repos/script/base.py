@@ -41,7 +41,11 @@ class Script[RepoType: Repo]:
     """
 
     def __init__(self, *, submit: bool = False) -> None:
-        """ """
+        if self.target == self.branch:
+            raise ValueError(
+                "Work branch name must be different than target branch name."
+            )
+
         source_file = inspect.getsourcefile(self.__class__)
 
         if source_file is None:
