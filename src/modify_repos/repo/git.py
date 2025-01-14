@@ -5,6 +5,7 @@ from shutil import which
 from subprocess import CompletedProcess
 
 from ..utils import run_cmd
+from ..utils import wrap_text
 from .base import Repo
 
 
@@ -63,6 +64,20 @@ class GitRepo(Repo):
         self.git_cmd("switch", self.script.target)
         self.git_cmd("merge", "--ff-only", self.script.branch)
         self.git_cmd("push")
+
+    def commit(self, message: str, add: bool = False) -> None:
+        """Create a commit with the given message.
+
+        :param message: The commit message.
+        :param add: Update tracked files while committing. Disabled by default.
+            Alternatively, call {meth}`add_files` first.
+        """
+        args = ["commit", "--message", wrap_text(message, width=72)]
+
+        if add:
+            args.insert(1, "-a")
+
+        self.git_cmd(*args)
 
     def add_files(
         self, *items: str | Path, update: bool = False, all: bool = False
