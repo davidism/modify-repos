@@ -17,7 +17,7 @@ class GitHubScript(Script[GitHubRepo]):
     orgs: list[str]
     """The list of GitHub users/orgs to clone repositories from."""
 
-    def __init__(self, *, submit: bool = True, orgs: list[str] | None = None) -> None:
+    def __init__(self, *, submit: bool = False, orgs: list[str] | None = None) -> None:
         super().__init__(submit=submit)
 
         if orgs is not None:
