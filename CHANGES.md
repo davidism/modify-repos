@@ -4,6 +4,7 @@ Unreleased
 
 - If a PR already exists from a previous failed run, force push to update the
   existing branch and PR.
+- Add shortcut `repo.commit(message)` method.
 
 ## Version 0.1.1
 
