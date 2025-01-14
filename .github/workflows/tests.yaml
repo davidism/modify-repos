@@ -23,4 +23,4 @@ jobs:
         with:
           path: ./.mypy_cache
           key: mypy|${{ hashFiles('pyproject.toml') }}
-      - run: uv run tox run -e typing
+      - run: uv run --locked tox run -e typing
