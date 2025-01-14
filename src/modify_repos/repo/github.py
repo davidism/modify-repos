@@ -66,14 +66,21 @@ class GitHubRepo(GitRepo):
             super().submit()
             return
 
-        self.git_cmd("push", "--set-upstream", "origin", self.script.branch)
-        self.gh_cmd(
-            "pr",
-            "create",
-            "--base",
-            self.script.target,
-            "--title",
-            self.script.title,
-            "--body",
-            self.script.body,
-        )
+        result = self.gh_cmd("pr", "view", "--json", "closed", "--jq", ".closed")
+        has_pr = not result.returncode and result.stdout.strip() == "false"
+
+        if not has_pr:
+            self.git_cmd("push", "--set-upstream", "origin", self.script.branch)
+            self.gh_cmd(
+                "pr",
+                "create",
+                "--base",
+                self.script.target,
+                "--title",
+                self.script.title,
+                "--body",
+                self.script.body,
+            )
+        else:
+            # If open PR already exists from previous run, force push.
+            self.git_cmd("push", "--force", "origin", self.script.branch)
