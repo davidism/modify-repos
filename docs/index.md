@@ -16,6 +16,10 @@ Create a Python file, subclass {class}`.GitHubScript`, define a few attributes
 and its {meth}`~.GitHubScript.modify` method, then call its
 {meth}`~.GitHubScript.run` method. See {doc}`script` for a full example.
 
+## Source
+
+The project is hosted on GitHub: <https://github.com/davidism/modify-repos/>.
+
 ```{toctree}
 :hidden:
 

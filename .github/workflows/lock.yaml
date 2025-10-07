@@ -1,5 +1,5 @@
-name: lock inactive closed issues
-# Lock closed issues that have not received any further activity for one month.
+name: Lock inactive closed issues
+# Lock closed issues that have not received any further activity for two weeks.
 # This does not close open issues, only humans may do that. It is easier to
 # respond to new issues with fresh examples rather than continuing discussions
 # on old issues.

@@ -1,51 +1,55 @@
 [project]
 name = "modify-repos"
-version = "0.2.0"
+version = "0.3.0.dev"
 description = "Apply changes across multiple repos at once."
 readme = "README.md"
 authors = [{ name = "David Lord" }]
 license = "MIT"
 license-files = ["LICENSE.txt"]
-requires-python = "~=3.13.0"
+requires-python = ">=3.13.0"
 dependencies = [
     "click>=8.1.8",
     "jinja2>=3.1.5",
     "platformdirs>=4.3.6",
 ]
 
+[project.urls]
+Documentation = "https://modify-repos.readthedocs.io"
+Changes = "https://modify-repos.readthedocs.io/page/changes/"
+Source = "https://github.com/davidism/modify-repos/"
+
 [build-system]
-requires = ["pdm-backend>=2.4.3"]
-build-backend = "pdm.backend"
+requires = ["uv_build>=0.8.24,<0.9.0"]
+build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
-    "mypy>=1.14.1",
-    "pre-commit>=4.0.1",
-    "pyright>=1.1.391",
-    "pytest>=8.3.4",
-    "ruff>=0.8.6",
-    "tox>=4.23.2",
-    "tox-uv>=1.17.0",
-]
-pre-commit = [
-    "pre-commit>=4.0.1",
-]
-typing = [
-    "mypy>=1.14.1",
-    "pyright>=1.1.391",
+    "ruff",
+    "tox",
+    "tox-uv",
 ]
 docs = [
-    "furo>=2024.8.6",
-    "myst-parser>=4.0.0",
-    "sphinx>=8.1.3",
-    "sphinx-autodoc2>=0.5.0",
+    "furo",
+    "myst-parser",
+    "sphinx",
 ]
 docs-auto = [
-    "sphinx-autobuild>=2024.10.3",
+    "sphinx-autobuild",
 ]
 gha-update = [
-    "gha-update>=0.1.0",
+    "gha-update",
 ]
+pre-commit = [
+    "pre-commit",
+    "pre-commit-uv",
+]
+typing = [
+    "mypy",
+    "pyright",
+]
+
+[tool.uv]
+default-groups = ["dev", "pre-commit", "typing"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -92,11 +96,6 @@ select = [
 force-single-line = true
 order-by-type = false
 
-[tool.gha-update]
-tag-only = [
-    "slsa-framework/slsa-github-generator",
-]
-
 [tool.tox]
 env_list = ["style", "typing", "docs"]
 
@@ -108,11 +107,13 @@ constrain_package_deps = true
 use_frozen_constraints = true
 
 [tool.tox.env.style]
-dependency_groups = ["pre-commmit"]
+description = "run all pre-commit hooks on all files"
+dependency_groups = ["pre-commit"]
 skip_install = true
 commands = [["pre-commit", "run", "--all-files"]]
 
 [tool.tox.env.typing]
+description = "run static type checkers"
 dependency_groups = ["typing"]
 commands = [
     ["mypy"],
@@ -121,26 +122,33 @@ commands = [
 ]
 
 [tool.tox.env.docs]
+description = "build docs"
 dependency_groups = ["docs"]
 commands = [["sphinx-build", "-E", "-W", "-b", "dirhtml", "docs", "docs/_build/dirhtml"]]
 
 [tool.tox.env.docs-auto]
+description = "continuously rebuild docs and start a local server"
 dependency_groups = ["docs", "docs-auto"]
 commands = [["sphinx-autobuild", "-W", "-b", "dirhtml", "--watch", "src", "docs", "docs/_build/dirhtml"]]
 
 [tool.tox.env.update-actions]
+description = "update GitHub Actions pins"
 labels = ["update"]
 dependency_groups = ["gha-update"]
 skip_install = true
 commands = [["gha-update"]]
 
 [tool.tox.env.update-pre_commit]
+description = "update pre-commit pins"
 labels = ["update"]
 dependency_groups = ["pre-commit"]
 skip_install = true
 commands = [["pre-commit", "autoupdate", "--freeze", "-j4"]]
 
 [tool.tox.env.update-requirements]
+description = "update uv lock"
 labels = ["update"]
+dependency_groups = []
+no_default_groups = true
 skip_install = true
-commands = [["uv", "sync", { replace = "posargs", default = ["-U"], extend = true }]]
+commands = [["uv", "lock", {replace = "posargs", default = ["-U"], extend = true}]]
